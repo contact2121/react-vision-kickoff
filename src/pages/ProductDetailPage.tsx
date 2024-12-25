@@ -54,9 +54,10 @@ const ProductDetailPage = () => {
       return;
     }
 
-    // Save personalization if provided
-    if (personalizationText.trim()) {
-      savePersonalization(product!.id, personalizationText.trim());
+    // Only save and use personalization if it exists
+    const trimmedText = personalizationText?.trim() || '';
+    if (trimmedText) {
+      savePersonalization(product!.id, trimmedText);
     }
 
     addToCart({
@@ -67,7 +68,7 @@ const ProductDetailPage = () => {
       image: product!.image,
       size: selectedSize,
       color: product!.colorProduct,
-      personalization: personalizationText.trim(),
+      personalization: trimmedText,
     });
 
     toast({
@@ -159,7 +160,7 @@ const ProductDetailPage = () => {
               <div className="mt-6">
                 <PersonalizationInput
                   itemId={product.id}
-                  onUpdate={(text) => setPersonalizationText(text)}
+                  onUpdate={setPersonalizationText}
                 />
               </div>
             </div>

@@ -8,7 +8,7 @@ import { savePersonalization, removePersonalization, getPersonalizations } from 
 
 interface PersonalizationInputProps {
   itemId: number;
-  onUpdate: () => void;
+  onUpdate: (text: string) => void;
 }
 
 const PersonalizationInput = ({ itemId, onUpdate }: PersonalizationInputProps) => {
@@ -23,10 +23,11 @@ const PersonalizationInput = ({ itemId, onUpdate }: PersonalizationInputProps) =
   const [isEditing, setIsEditing] = useState(!text);
 
   const handleSave = () => {
-    if (text.trim()) {
-      savePersonalization(itemId, text.trim());
+    const trimmedText = text.trim();
+    if (trimmedText) {
+      savePersonalization(itemId, trimmedText);
       setIsEditing(false);
-      onUpdate();
+      onUpdate(trimmedText);
     }
   };
 
@@ -34,7 +35,7 @@ const PersonalizationInput = ({ itemId, onUpdate }: PersonalizationInputProps) =
     removePersonalization(itemId);
     setText('');
     setIsPersonalized(false);
-    onUpdate();
+    onUpdate('');
   };
 
   if (!isPersonalized) {
