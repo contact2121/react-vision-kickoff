@@ -1,22 +1,97 @@
-import { Button } from "@/components/ui/button";
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-export const Hero = () => {
+const Hero = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const banners = [
+    {
+      image: 'banner.png',
+      title: 'Univers cadeau'
+    },
+    {
+      image: 'banner2.png',
+      title: 'Nouvelle collection'
+    },
+    {
+      image: 'banner3.png',
+      title: 'Le sur mesure'
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prevIndex) =>
+        prevIndex === banners.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 8000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <div className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-secondary to-primary/10">
-      <div className="absolute inset-0 w-full h-full bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
-      <div className="container px-4 md:px-6 relative z-10">
-        <div className="flex flex-col items-center space-y-4 text-center animate-fade-in">
-          <h1 className="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
-            Welcome to Your Amazing App
-          </h1>
-          <p className="max-w-[600px] text-zinc-700 md:text-xl dark:text-zinc-300">
-            Create something extraordinary with our powerful and intuitive platform
-          </p>
-          <Button className="bg-primary text-white hover:bg-primary/90">
-            Get Started
-          </Button>
+    <section className="relative h-[95vh] overflow-hidden"> {/* Changed from h-screen to h-[90vh] */}
+      <AnimatePresence mode='wait'>
+        <motion.div
+          key={currentIndex}
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('${banners[currentIndex].image}')`,
+            willChange: 'transform'
+          }}
+          initial={{ opacity: 0, scale: 1.1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{
+            duration: 1.2,
+            ease: [0.43, 0.13, 0.23, 0.96]
+          }}
+        />
+      </AnimatePresence>
+
+      <div className="absolute inset-0 bg-black/50" />
+
+      <div className="absolute bottom-6 w-full px-4 md:px-6 lg:px-8">
+        <div className="flex flex-col items-center lg:items-start">
+          <div className="flex justify-center lg:justify-start gap-4">
+            {banners.map((banner, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center lg:items-start"
+                style={{ minWidth: '100px' }}
+              >
+                <motion.h2
+                  className={`text-xs md:text-sm font-medium mb-1 text-center lg:text-left transition-colors duration-300 ${
+                    currentIndex === index ? 'text-white' : 'text-gray-400'
+                  }`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  {banner.title}
+                </motion.h2>
+                
+                <div className="w-full h-[1px] bg-gray-600 rounded-full">
+                  {currentIndex === index && (
+                    <motion.div
+                      className="h-full bg-white rounded-full"
+                      initial={{ width: '0%' }}
+                      animate={{ width: '100%' }}
+                      transition={{
+                        duration: 8,
+                        ease: 'linear',
+                        repeat: 0
+                      }}
+                      key={`progress-${currentIndex}`}
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
+
+export default Hero;

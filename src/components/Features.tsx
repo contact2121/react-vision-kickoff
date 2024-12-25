@@ -1,38 +1,44 @@
-import { CheckCircle } from "lucide-react";
+import { Code, Palette, Zap } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const features = [
   {
-    title: "Easy to Use",
-    description: "Intuitive interface that makes everything simple",
+    title: "Fast Development",
+    description: "Quick iterations with hot reload and modern development tools.",
+    icon: <Zap className="w-10 h-10 text-blue-500" />,
   },
   {
-    title: "Powerful Features",
-    description: "All the tools you need to succeed",
+    title: "Beautiful Design",
+    description: "Stunning UI components and responsive layouts out of the box.",
+    icon: <Palette className="w-10 h-10 text-purple-500" />,
   },
   {
-    title: "Fast & Reliable",
-    description: "Built for performance and dependability",
+    title: "Clean Code",
+    description: "Well-structured TypeScript code following best practices.",
+    icon: <Code className="w-10 h-10 text-pink-500" />,
   },
 ];
 
-export const Features = () => {
+const Features = () => {
   return (
-    <section className="py-20 bg-white">
-      <div className="container px-4 md:px-6">
-        <div className="grid gap-12 md:grid-cols-3">
+    <div className="py-20 px-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center text-center animate-fade-in"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <CheckCircle className="h-12 w-12 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-zinc-600">{feature.description}</p>
-            </div>
+            <Card key={index} className="hover-card">
+              <CardHeader>
+                <div className="mb-4">{feature.icon}</div>
+                <CardTitle>{feature.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">{feature.description}</p>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 };
+
+export default Features;
