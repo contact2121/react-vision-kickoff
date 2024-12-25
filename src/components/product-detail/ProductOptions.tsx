@@ -13,29 +13,19 @@ interface ProductOptionsProps {
   setQuantity: (quantity: number) => void;
   onAddToCart: () => void;
   stock?: number;
+  availableSizes: string[];
 }
 
 const ProductOptions = ({
   selectedSize,
   setSelectedSize,
   selectedColor,
-  setSelectedColor,
   quantity,
   setQuantity,
   onAddToCart,
-  stock = 1
+  stock = 1,
+  availableSizes,
 }: ProductOptionsProps) => {
-  const colors = {
-    "Orange": "#DC6B48",
-    "Blanc": "#FFFFFF", 
-    "Gris": "#E5E5E5",
-    "Noir": "#1A1A1A",
-    "Marron": "#8B4513",
-    "Vert Sauge": "#9CA88C"
-  };
-
-  const sizes = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'];
-
   return (
     <div className="space-y-4">
       <div className="space-y-2">
@@ -43,45 +33,32 @@ const ProductOptions = ({
           <Label className="text-base font-semibold text-gray-900">Couleur</Label>
           <span className="text-sm font-medium text-gray-600">{selectedColor}</span>
         </div>
-        <RadioGroup value={selectedColor} onValueChange={setSelectedColor} className="flex flex-wrap gap-2">
-          {Object.entries(colors).map(([colorName, colorCode]) => (
-            <div key={colorName} className="relative">
-              <RadioGroupItem value={colorName} id={`color-${colorName}`} className="peer sr-only"/>
-              <Label
-                htmlFor={`color-${colorName}`}
-                className={`relative flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border-2 transition-all
-                  ${colorName === 'Blanc' ? 'border-gray-300' : 'border-transparent'}
-                  peer-checked:ring-2 peer-checked:ring-[#700100] peer-checked:ring-offset-1
-                  hover:scale-110 transition-transform duration-200`}
-                style={{ backgroundColor: colorCode }}
-              >
-                {selectedColor === colorName && (
-                  <Check className={`w-3 h-3 ${colorName === 'Blanc' ? 'text-black' : 'text-white'}`} />
-                )}
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
       </div>
 
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <Label className="text-base font-semibold text-gray-900">Taille</Label>
-          <a href="#guide-tailles" className="text-sm font-medium text-[#700100] hover:underline">Guide des tailles</a>
+          <Label className="text-base font-semibold text-gray-900">
+            Taille {selectedSize ? `sélectionnée: ${selectedSize}` : ''}
+          </Label>
+          <button className="text-xs text-[#700100] hover:underline">
+            Guide des tailles
+          </button>
         </div>
-        <RadioGroup value={selectedSize} onValueChange={setSelectedSize} className="grid grid-cols-4 md:grid-cols-7 gap-1.5">
-          {sizes.map((size) => (
-            <div key={size}>
-              <RadioGroupItem value={size} id={`size-${size}`} className="peer sr-only"/>
-              <Label
-                htmlFor={`size-${size}`}
-                className="flex h-9 cursor-pointer items-center justify-center rounded-md border-2 border-gray-200 bg-white text-black text-sm font-medium transition-all peer-checked:border-[#700100] peer-checked:bg-[#700100] peer-checked:text-white hover:bg-gray-50"
-              >
-                {size}
-              </Label>
-            </div>
+        <div className="grid grid-cols-6 gap-1">
+          {availableSizes.map((size) => (
+            <button
+              key={size}
+              onClick={() => setSelectedSize(size)}
+              className={`py-2 text-sm font-medium rounded-md transition-all duration-200
+                ${selectedSize === size 
+                  ? 'bg-[#700100] text-white shadow-md transform scale-105' 
+                  : 'bg-white border border-gray-200 text-gray-900 hover:border-[#700100] hover:bg-gray-50'
+                }`}
+            >
+              {size}
+            </button>
           ))}
-        </RadioGroup>
+        </div>
       </div>
 
       <div className="space-y-2">

@@ -5,9 +5,9 @@ import { fetchAllProducts } from '@/services/productsApi';
 import { useCart } from '@/components/cart/CartProvider';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
-import { ArrowLeft, ShoppingCart, Heart } from 'lucide-react';
+import { ArrowLeft, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
-import ProductImage from '@/components/product-detail/ProductImage';
+import ProductImageCarousel from '@/components/product-detail/ProductImageCarousel';
 import ProductInfo from '@/components/product-detail/ProductInfo';
 import ProductOptions from '@/components/product-detail/ProductOptions';
 import RelatedProducts from '@/components/product-detail/RelatedProducts';
@@ -17,12 +17,12 @@ import MainNavbar from '@/components/MainNavbar';
 import Footer from '@/components/Footer';
 import BrandNavbarSection from '@/components/productsPages/BrandNavbarSection';
 import MainNavbarProduct from '@/components/productsPages/MainNavbarProduct';
+
 const ProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const [selectedSize, setSelectedSize] = useState('');
-  const [selectedColor, setSelectedColor] = useState('Orange');
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
@@ -33,8 +33,14 @@ const ProductDetailPage = () => {
 
   const product = products?.find(p => p.id === Number(id));
   const relatedProducts = products?.filter(p => 
-    p.id !== Number(id) && p.material === product?.material
+    p.id !== Number(id) && p.relatedProducts === product?.relatedProducts
   ).slice(0, 4);
+
+  // Get available sizes (sizes with quantity > 0)
+  const availableSizes = product ? Object.entries(product.sizes)
+    .filter(([_, quantity]) => quantity > 0)
+    .map(([size]) => size.toUpperCase())
+    : [];
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -52,6 +58,8 @@ const ProductDetailPage = () => {
       price: product!.price,
       quantity: quantity,
       image: product!.image,
+      size: selectedSize,
+      color: product!.colorProduct,
     });
 
     toast({
@@ -84,13 +92,20 @@ const ProductDetailPage = () => {
     );
   }
 
+  const productImages = [
+    product.image,
+    product.image2,
+    product.image3,
+    product.image4,
+  ].filter(Boolean);
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <TopNavbar />
       <BrandNavbarSection />
       <div className="hidden lg:block">
-          <MainNavbarProduct />
-        </div>
+        <MainNavbarProduct />
+      </div>
       <main className="flex-grow">
         <div className="max-w-7xl mx-auto px-4 py-8 mt-[10px] lg:mt-[20px]">
           <button
@@ -109,7 +124,7 @@ const ProductDetailPage = () => {
               >
                 <Heart className={`h-5 w-5 ${isWishlisted ? 'fill-[#700100] text-[#700100]' : 'text-gray-400'}`} />
               </button>
-              <ProductImage image={product.image} name={product.name} />
+              <ProductImageCarousel images={productImages} name={product.name} />
             </div>
 
             <div className="space-y-8">
@@ -124,12 +139,13 @@ const ProductDetailPage = () => {
               <ProductOptions
                 selectedSize={selectedSize}
                 setSelectedSize={setSelectedSize}
-                selectedColor={selectedColor}
-                setSelectedColor={setSelectedColor}
+                selectedColor={product.colorProduct}
+                setSelectedColor={() => {}}
                 quantity={quantity}
                 setQuantity={setQuantity}
                 onAddToCart={handleAddToCart}
-                stock={10}
+                stock={product.quantity}
+                availableSizes={availableSizes}
               />
             </div>
           </div>
