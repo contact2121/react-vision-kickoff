@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { saveCartItems, getCartItems } from '@/utils/cartStorage';
+import { getPersonalizations } from '@/utils/personalizationStorage';
 
 export interface CartItem {
   id: number;
@@ -28,8 +29,16 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   // Load cart items from localStorage on mount
   useEffect(() => {
     const savedItems = getCartItems();
-    if (savedItems.length > 0) {
-      setCartItems(savedItems);
+    const personalizations = getPersonalizations();
+    
+    // Merge personalizations with cart items
+    const itemsWithPersonalization = savedItems.map(item => ({
+      ...item,
+      personalization: item.personalization || personalizations[item.id] || '',
+    }));
+    
+    if (itemsWithPersonalization.length > 0) {
+      setCartItems(itemsWithPersonalization);
     }
   }, []);
 
@@ -40,11 +49,20 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   const addToCart = (item: CartItem) => {
     setCartItems(prevItems => {
-      const existingItem = prevItems.find(i => i.id === item.id);
+      const existingItem = prevItems.find(i => 
+        i.id === item.id && 
+        i.size === item.size && 
+        i.color === item.color && 
+        i.personalization === item.personalization
+      );
+      
       if (existingItem) {
         return prevItems.map(i =>
-          i.id === item.id
-            ? { ...i, quantity: i.quantity + item.quantity, size: item.size, color: item.color, personalization: item.personalization }
+          i.id === item.id && 
+          i.size === item.size && 
+          i.color === item.color && 
+          i.personalization === item.personalization
+            ? { ...i, quantity: i.quantity + item.quantity }
             : i
         );
       }

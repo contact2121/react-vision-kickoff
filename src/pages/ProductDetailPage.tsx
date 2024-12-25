@@ -17,6 +17,8 @@ import MainNavbar from '@/components/MainNavbar';
 import Footer from '@/components/Footer';
 import BrandNavbarSection from '@/components/productsPages/BrandNavbarSection';
 import MainNavbarProduct from '@/components/productsPages/MainNavbarProduct';
+import PersonalizationInput from '@/components/cart/PersonalizationInput';
+import { savePersonalization, getPersonalizations } from '@/utils/personalizationStorage';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -25,6 +27,7 @@ const ProductDetailPage = () => {
   const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [personalizationText, setPersonalizationText] = useState('');
 
   const { data: products, isLoading } = useQuery({
     queryKey: ['products'],
@@ -36,7 +39,6 @@ const ProductDetailPage = () => {
     p.id !== Number(id) && p.relatedProducts === product?.relatedProducts
   ).slice(0, 4);
 
-  // Get available sizes (sizes with quantity > 0)
   const availableSizes = product ? Object.entries(product.sizes)
     .filter(([_, quantity]) => quantity > 0)
     .map(([size]) => size.toUpperCase())
@@ -52,6 +54,11 @@ const ProductDetailPage = () => {
       return;
     }
 
+    // Save personalization if provided
+    if (personalizationText.trim()) {
+      savePersonalization(product!.id, personalizationText.trim());
+    }
+
     addToCart({
       id: product!.id,
       name: product!.name,
@@ -60,6 +67,7 @@ const ProductDetailPage = () => {
       image: product!.image,
       size: selectedSize,
       color: product!.colorProduct,
+      personalization: personalizationText.trim(),
     });
 
     toast({
@@ -147,6 +155,13 @@ const ProductDetailPage = () => {
                 stock={product.quantity}
                 availableSizes={availableSizes}
               />
+
+              <div className="mt-6">
+                <PersonalizationInput
+                  itemId={product.id}
+                  onUpdate={(text) => setPersonalizationText(text)}
+                />
+              </div>
             </div>
           </div>
 
