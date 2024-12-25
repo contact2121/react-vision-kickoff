@@ -74,20 +74,19 @@ const PersonalizationInput = ({ itemId, onUpdate }: PersonalizationInputProps) =
               Confirmer
             </Button>
             <Button
-  size="sm"
-  variant="outline"
-  className="flex-1 border-[#700100] bg-white text-[#700100] hover:bg-red-500 hover:text-white transition-all duration-300"
-  onClick={() => {
-    if (!text) {
-      setIsPersonalized(false);
-    } else {
-      setIsEditing(false);
-    }
-  }}
->
-  Annuler
-</Button>
-
+              size="sm"
+              variant="outline"
+              className="flex-1 border-[#700100] bg-white text-[#700100] hover:bg-red-500 hover:text-white transition-all duration-300"
+              onClick={() => {
+                if (!text) {
+                  setIsPersonalized(false);
+                } else {
+                  setIsEditing(false);
+                }
+              }}
+            >
+              Annuler
+            </Button>
           </div>
         </div>
       ) : (
